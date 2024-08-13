@@ -29,5 +29,8 @@ dist-ssr
 .env.stage
 .ev.production
 
+# Development DB
+dev.db
+
 # Tests
 coverage/*
