@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 
 export async function tripRoutes(app: FastifyInstance) {
@@ -21,5 +22,19 @@ export async function tripRoutes(app: FastifyInstance) {
     }
 
     return reply.send(trip);
+  });
+
+  app.post('/trips', async (request, reply) => {
+    const schema = z.object({
+      destination: z.string().min(3),
+      starts_at: z.coerce.date(),
+      ends_at: z.coerce.date(),
+    });
+
+    const data = schema.parse(request.body);
+
+    await prisma.trip.create({ data });
+
+    return reply.status(201).send({ message: 'Trip created successfully' });
   });
 }
