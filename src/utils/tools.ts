@@ -11,5 +11,8 @@ export function isDateBeforeAnotherDate(
   startDate: string | Date,
   endDate: string | Date
 ): boolean {
+  if (!dayjs(startDate).isValid()) throw new Error('Invalid start date');
+  if (!dayjs(endDate).isValid()) throw new Error('Invalid end date');
+
   return dayjs(endDate).isBefore(new Date(startDate));
 }
