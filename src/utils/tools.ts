@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 
-export function isDateBeforeNow(date: string | Date): boolean {
+export function isDateBeforeNow(date: string | Date): boolean | void {
+  if (!dayjs(date).isValid()) {
+    throw new Error('Invalid date');
+  }
   return dayjs(date).isBefore(new Date());
 }
 
