@@ -33,8 +33,8 @@ export async function tripRoutes(app: FastifyInstance) {
 
     const data = schema.parse(request.body);
 
-    await prisma.trip.create({ data });
+    const trip = await prisma.trip.create({ data });
 
-    return reply.status(201).send({ message: 'Trip created successfully' });
+    return reply.status(201).send({ trip });
   });
 }
