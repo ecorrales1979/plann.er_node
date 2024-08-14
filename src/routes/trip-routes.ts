@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
+import { isDateBeforeAnotherDate, isDateBeforeNow } from '../utils/tools';
 
 export async function tripRoutes(app: FastifyInstance) {
   app.get('/trips', async (request, reply) => {
@@ -32,6 +33,11 @@ export async function tripRoutes(app: FastifyInstance) {
     });
 
     const data = schema.parse(request.body);
+
+    if (isDateBeforeNow(data.starts_at)) throw new Error('Invalid start date');
+
+    if (isDateBeforeAnotherDate(data.starts_at, data.ends_at))
+      throw new Error('Invalid end date');
 
     const trip = await prisma.trip.create({ data });
 
