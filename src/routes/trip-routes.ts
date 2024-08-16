@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify';
+import nodemailer from 'nodemailer';
 import { z } from 'zod';
+import { getMailClient } from '../lib/mail';
 import { prisma } from '../lib/prisma';
 import { isDateBeforeAnotherDate, isDateBeforeNow } from '../utils/tools';
 
@@ -30,6 +32,8 @@ export async function tripRoutes(app: FastifyInstance) {
       destination: z.string().min(3),
       starts_at: z.coerce.date(),
       ends_at: z.coerce.date(),
+      owner_name: z.string(),
+      owner_email: z.string().email(),
     });
 
     const data = schema.parse(request.body);
@@ -40,6 +44,22 @@ export async function tripRoutes(app: FastifyInstance) {
       throw new Error('Invalid end date');
 
     const trip = await prisma.trip.create({ data });
+
+    const mail = await getMailClient();
+    const message = await mail.sendMail({
+      from: {
+        name: 'Plann.er Team',
+        address: 'support@plann.er',
+      },
+      to: {
+        name: data.owner_name,
+        address: data.owner_email,
+      },
+      subject: 'Your trip has been created!',
+      html: `<p>Your trip to ${data.destination} has been created successfully!</p>`,
+    });
+
+    console.log(nodemailer.getTestMessageUrl(message));
 
     return reply.status(201).send({ trip });
   });
