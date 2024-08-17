@@ -36,14 +36,29 @@ export async function tripRoutes(app: FastifyInstance) {
       owner_email: z.string().email(),
     });
 
-    const data = schema.parse(request.body);
+    const { destination, ends_at, owner_email, owner_name, starts_at } =
+      schema.parse(request.body);
 
-    if (isDateBeforeNow(data.starts_at)) throw new Error('Invalid start date');
+    if (isDateBeforeNow(starts_at)) throw new Error('Invalid start date');
 
-    if (isDateBeforeAnotherDate(data.starts_at, data.ends_at))
+    if (isDateBeforeAnotherDate(starts_at, ends_at))
       throw new Error('Invalid end date');
 
-    const trip = await prisma.trip.create({ data });
+    const trip = await prisma.trip.create({
+      data: {
+        destination,
+        ends_at,
+        starts_at,
+        participants: {
+          create: {
+            name: owner_name,
+            email: owner_email,
+            is_confirmed: true,
+            is_owner: true,
+          },
+        },
+      },
+    });
 
     const mail = await getMailClient();
     const message = await mail.sendMail({
@@ -52,11 +67,11 @@ export async function tripRoutes(app: FastifyInstance) {
         address: 'support@plann.er',
       },
       to: {
-        name: data.owner_name,
-        address: data.owner_email,
+        name: owner_name,
+        address: owner_email,
       },
       subject: 'Your trip has been created!',
-      html: `<p>Your trip to ${data.destination} has been created successfully!</p>`,
+      html: `<p>Your trip to ${destination} has been created successfully!</p>`,
     });
 
     console.log(nodemailer.getTestMessageUrl(message));
