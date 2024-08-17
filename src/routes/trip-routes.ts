@@ -84,8 +84,20 @@ export async function tripRoutes(app: FastifyInstance) {
         name: owner_name,
         address: owner_email,
       },
-      subject: 'Your trip has been created!',
-      html: `<p>Your trip to ${destination} has been created successfully!</p>`,
+      subject: `Confirm your trip to ${destination}`,
+      html: `
+        <div style="font-family: sans-serif; font-size: 16px; line-height: 1.6;">
+          <p>You requested a trip creation to <strong>${destination}</strong> between <strong>${starts_at}</strong> and <strong>${ends_at}</strong>.</p>
+          <p></p>
+          <p>To confirm your trip, click in the next link:</p>
+          <p></p>
+          <p>
+              <a href="">Confirm trip</a>
+          </p>
+          <p></p>
+          <p>If you don't know what this email is about, just ignore it.</p>
+        </div>
+      `.trim(),
     });
 
     console.log(nodemailer.getTestMessageUrl(message));
