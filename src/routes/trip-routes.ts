@@ -76,6 +76,7 @@ export async function tripRoutes(app: FastifyInstance) {
     });
 
     const formattedDates = formatDateRange(starts_at, ends_at);
+    const confirmationLink = `${process.env.SERVER_URL}/trips/${trip.id}/confirm`;
 
     const mail = await getMailClient();
     const message = await mail.sendMail({
@@ -95,7 +96,7 @@ export async function tripRoutes(app: FastifyInstance) {
           <p>To confirm your trip, click in the next link:</p>
           <p></p>
           <p>
-              <a href="">Confirm trip</a>
+              <a href="${confirmationLink}">Confirm trip</a>
           </p>
           <p></p>
           <p>If you don't know what this email is about, just ignore it.</p>
