@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import { confirmTrip } from './routes/confirm-trip';
 import { tripRoutes } from './routes/trip-routes';
 
 const app = fastify();
@@ -8,6 +9,7 @@ app.get('/', () => {
 });
 
 app.register(tripRoutes);
+app.register(confirmTrip);
 
 app.listen({ port: 3333 }).then(() => {
   console.log('Server running on port 3333');
