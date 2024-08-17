@@ -34,10 +34,17 @@ export async function tripRoutes(app: FastifyInstance) {
       ends_at: z.coerce.date(),
       owner_name: z.string(),
       owner_email: z.string().email(),
+      emails_to_invite: z.array(z.string().email()),
     });
 
-    const { destination, ends_at, owner_email, owner_name, starts_at } =
-      schema.parse(request.body);
+    const {
+      destination,
+      emails_to_invite,
+      ends_at,
+      owner_email,
+      owner_name,
+      starts_at,
+    } = schema.parse(request.body);
 
     if (isDateBeforeNow(starts_at)) throw new Error('Invalid start date');
 
@@ -50,11 +57,18 @@ export async function tripRoutes(app: FastifyInstance) {
         ends_at,
         starts_at,
         participants: {
-          create: {
-            name: owner_name,
-            email: owner_email,
-            is_confirmed: true,
-            is_owner: true,
+          createMany: {
+            data: [
+              {
+                name: owner_name,
+                email: owner_email,
+                is_confirmed: true,
+                is_owner: true,
+              },
+              ...emails_to_invite.map((email) => {
+                return { email };
+              }),
+            ],
           },
         },
       },
