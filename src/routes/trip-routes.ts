@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import { getMailClient } from '../lib/mail';
 import { prisma } from '../lib/prisma';
+import { formatDateRange } from '../utils/formatters';
 import { isDateBeforeAnotherDate, isDateBeforeNow } from '../utils/tools';
 
 export async function tripRoutes(app: FastifyInstance) {
@@ -74,6 +75,8 @@ export async function tripRoutes(app: FastifyInstance) {
       },
     });
 
+    const formattedDates = formatDateRange(starts_at, ends_at);
+
     const mail = await getMailClient();
     const message = await mail.sendMail({
       from: {
@@ -87,7 +90,7 @@ export async function tripRoutes(app: FastifyInstance) {
       subject: `Confirm your trip to ${destination}`,
       html: `
         <div style="font-family: sans-serif; font-size: 16px; line-height: 1.6;">
-          <p>You requested a trip creation to <strong>${destination}</strong> between <strong>${starts_at}</strong> and <strong>${ends_at}</strong>.</p>
+          <p>You requested a trip creation to <strong>${destination}</strong> on <strong>${formattedDates}</strong>.</p>
           <p></p>
           <p>To confirm your trip, click in the next link:</p>
           <p></p>
