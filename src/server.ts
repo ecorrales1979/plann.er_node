@@ -1,8 +1,13 @@
+import cors from '@fastify/cors';
 import fastify from 'fastify';
 import { confirmTrip } from './routes/confirm-trip';
 import { tripRoutes } from './routes/trip-routes';
 
 const app = fastify();
+
+app.register(cors, {
+  origin: '*',
+});
 
 app.get('/', () => {
   return 'Everything OK!';
