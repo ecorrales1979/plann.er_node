@@ -18,6 +18,7 @@ export async function confirmTrip(app: FastifyInstance) {
     },
     async (request, reply) => {
       const { tripId } = request.params;
+      const redirectionUrl = `${process.env.SERVER_URL}/trips/${tripId}`;
 
       const trip = await prisma.trip.findUnique({
         where: { id: tripId },
@@ -33,7 +34,7 @@ export async function confirmTrip(app: FastifyInstance) {
       }
 
       if (trip.is_confirmed) {
-        return reply.redirect(`${process.env.SERVER_URL}/trips/${tripId}`);
+        return reply.redirect(redirectionUrl);
       }
 
       await prisma.trip.update({
@@ -74,7 +75,7 @@ export async function confirmTrip(app: FastifyInstance) {
         })
       );
 
-      return { tripId };
+      return reply.redirect(redirectionUrl);
     }
   );
 }
