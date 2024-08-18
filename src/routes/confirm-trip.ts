@@ -1,23 +1,21 @@
 import { FastifyInstance } from 'fastify';
-import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import { getMailClient } from '../lib/mail';
 import { prisma } from '../lib/prisma';
 import { formatDateRange } from '../utils/formatters';
 
+const paramsSchema = z.object({
+  tripId: z.string().uuid(),
+});
+
+type Params = z.infer<typeof paramsSchema>;
+
 export async function confirmTrip(app: FastifyInstance) {
-  app.withTypeProvider<ZodTypeProvider>().get(
+  app.get<{ Params: Params }>(
     `/trips/:tripId/confirm`,
-    {
-      schema: {
-        params: z.object({
-          tripId: z.string().uuid(),
-        }),
-      },
-    },
     async (request, reply) => {
-      const { tripId } = request.params;
+      const { tripId } = paramsSchema.parse(request.params);
       const redirectionUrl = `${process.env.SERVER_URL}/trips/${tripId}`;
 
       const trip = await prisma.trip.findUnique({
