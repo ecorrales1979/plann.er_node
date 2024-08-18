@@ -8,7 +8,7 @@ import { formatDateRange } from '../utils/formatters';
 
 export async function confirmTrip(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    `/trips/:tripId/confirmation`,
+    `/trips/:tripId/confirm`,
     {
       schema: {
         params: z.object({
