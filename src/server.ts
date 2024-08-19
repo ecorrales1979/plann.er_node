@@ -1,5 +1,6 @@
 import cors from '@fastify/cors';
 import fastify from 'fastify';
+import { activityRoutes } from './routes/activity-routes';
 import { confirmParticipant } from './routes/confirm-participant';
 import { confirmTrip } from './routes/confirm-trip';
 import { tripRoutes } from './routes/trip-routes';
@@ -17,6 +18,7 @@ app.get('/', () => {
 app.register(tripRoutes);
 app.register(confirmTrip);
 app.register(confirmParticipant);
+app.register(activityRoutes);
 
 app.listen({ port: 3333 }).then(() => {
   console.log('Server running on port 3333');
