@@ -14,6 +14,23 @@ const bodySchema = z.object({
 type Params = z.infer<typeof paramsSchema>;
 
 export async function linkRoutes(app: FastifyInstance) {
+  app.get<{ Params: Params }>('/trips/:tripId/links', async (request) => {
+    const { tripId } = paramsSchema.parse(request.params);
+
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      include: {
+        links: true,
+      },
+    });
+
+    if (!trip) {
+      throw new Error('Trip not found');
+    }
+
+    return { links: trip.links };
+  });
+
   app.post<{ Params: Params }>('/trips/:tripId/links', async (request) => {
     const { tripId } = paramsSchema.parse(request.params);
     const { url, title } = bodySchema.parse(request.body);
