@@ -20,6 +20,42 @@ const bodySchema = z.object({
 type Params = z.infer<typeof paramsSchema>;
 
 export async function activityRoutes(app: FastifyInstance) {
+  app.get<{ Params: Params }>('/trips/:tripId/activities', async (request) => {
+    const { tripId } = paramsSchema.parse(request.params);
+
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      include: {
+        activities: {
+          orderBy: {
+            occurs_at: 'asc',
+          },
+        },
+      },
+    });
+
+    if (!trip) {
+      throw new Error('Trip not found');
+    }
+
+    const tripDays = differenceInDaysBetweenTwoDates(
+      trip.starts_at,
+      trip.ends_at
+    );
+
+    const activities = Array.from({ length: tripDays + 1 }).map((_, index) => {
+      const date = dayjs(trip.starts_at).add(index, 'days');
+      return {
+        date: date.toDate(),
+        activities: trip.activities.filter((activity) => {
+          return dayjs(activity.occurs_at).isSame(date, 'day');
+        }),
+      };
+    });
+
+    return { activities };
+  });
+
   app.post<{ Params: Params }>('/trips/:tripId/activities', async (request) => {
     const { tripId } = paramsSchema.parse(request.params);
     const { occurs_at, title } = bodySchema.parse(request.body);
