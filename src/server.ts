@@ -2,7 +2,6 @@ import cors from '@fastify/cors';
 import fastify from 'fastify';
 import { activityRoutes } from './routes/activity-routes';
 import { confirmParticipant } from './routes/confirm-participant';
-import { confirmTrip } from './routes/confirm-trip';
 import { linkRoutes } from './routes/link-routes';
 import { tripRoutes } from './routes/trip-routes';
 
@@ -17,7 +16,6 @@ app.get('/', () => {
 });
 
 app.register(tripRoutes);
-app.register(confirmTrip);
 app.register(confirmParticipant);
 app.register(activityRoutes);
 app.register(linkRoutes);
