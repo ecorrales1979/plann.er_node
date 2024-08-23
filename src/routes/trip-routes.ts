@@ -7,7 +7,7 @@ import { viewTripController } from '../controllers/trip-controllers/view-trip-co
 
 export async function tripRoutes(app: FastifyInstance) {
   app.get('/trips', listTripController);
-  app.get('/trips/:id', viewTripController);
+  app.get('/trips/:tripId', viewTripController);
   app.post('/trips', createTripController);
   app.put('/trips/:id', updateTripController);
   app.get('/trips/:tripId/confirm', confirmTripController);
