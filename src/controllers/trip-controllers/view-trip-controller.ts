@@ -15,6 +15,13 @@ export async function viewTripController(
   const { tripId } = paramsSchema.parse(request.params);
 
   const trip = await prisma.trip.findUnique({
+    select: {
+      id: true,
+      destination: true,
+      starts_at: true,
+      ends_at: true,
+      is_confirmed: true,
+    },
     where: {
       id: tripId,
     },
