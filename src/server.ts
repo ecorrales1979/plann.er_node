@@ -1,5 +1,6 @@
 import cors from '@fastify/cors';
 import fastify from 'fastify';
+import { errorHandler } from './error-handler';
 import { activityRoutes } from './routes/activity-routes';
 import { linkRoutes } from './routes/link-routes';
 import { participantRoutes } from './routes/participant-routes';
@@ -10,6 +11,8 @@ const app = fastify();
 app.register(cors, {
   origin: '*',
 });
+
+app.setErrorHandler(errorHandler);
 
 app.get('/', () => {
   return 'Everything OK!';
