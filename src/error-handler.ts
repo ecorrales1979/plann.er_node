@@ -8,7 +8,6 @@ export const errorHandler: FastifyErrorHandler = (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  console.log(error);
   if (error instanceof ClientError) {
     return reply.status(error.code).send({ message: error.message });
   }
