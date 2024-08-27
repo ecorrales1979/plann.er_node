@@ -8,8 +8,9 @@ export const errorHandler: FastifyErrorHandler = (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
+  console.log(error);
   if (error instanceof ClientError) {
-    return reply.status(400).send({ message: error.message });
+    return reply.status(error.code).send({ message: error.message });
   }
 
   return reply.status(500).send({ message: 'Internal server error' });

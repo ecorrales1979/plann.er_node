@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { FastifyRequest } from 'fastify';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { prisma } from '../../lib/prisma';
 import { differenceInDaysBetweenTwoDates } from '../../utils/tools';
 
@@ -27,7 +28,7 @@ export async function listActivitiesController(
   });
 
   if (!trip) {
-    throw new Error('Trip not found');
+    throw new ClientError('Trip not found', 404);
   }
 
   const tripDays = differenceInDaysBetweenTwoDates(

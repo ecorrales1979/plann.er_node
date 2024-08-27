@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import nodemailer from 'nodemailer';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
 import { formatDateRange } from '../../utils/formatters';
@@ -28,7 +29,7 @@ export async function confirmTripController(
   });
 
   if (!trip) {
-    throw new Error('Trip not found');
+    throw new ClientError('Trip not found', 404);
   }
 
   if (trip.is_confirmed) {

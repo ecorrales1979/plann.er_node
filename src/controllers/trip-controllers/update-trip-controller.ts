@@ -1,5 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { prisma } from '../../lib/prisma';
 import { isDateBeforeAnotherDate, isDateBeforeNow } from '../../utils/tools';
 
@@ -26,15 +27,15 @@ export async function updateTripController(
   });
 
   if (!trip) {
-    throw new Error();
+    throw new ClientError('Trip not found', 404);
   }
 
   if (isDateBeforeNow(starts_at)) {
-    throw new Error('Invalid start date');
+    throw new ClientError('Invalid start date', 409);
   }
 
   if (isDateBeforeAnotherDate(starts_at, ends_at)) {
-    throw new Error('Invalid end date');
+    throw new ClientError('Invalid end date', 409);
   }
 
   await prisma.trip.update({

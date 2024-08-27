@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import nodemailer from 'nodemailer';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
 import { formatDateRange } from '../../utils/formatters';
@@ -28,10 +29,11 @@ export async function createTripController(
     starts_at,
   } = schema.parse(request.body);
 
-  if (isDateBeforeNow(starts_at)) throw new Error('Invalid start date');
+  if (isDateBeforeNow(starts_at))
+    throw new ClientError('Invalid start date', 409);
 
   if (isDateBeforeAnotherDate(starts_at, ends_at))
-    throw new Error('Invalid end date');
+    throw new ClientError('Invalid end date', 409);
 
   const trip = await prisma.trip.create({
     data: {

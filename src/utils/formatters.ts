@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
+import { ClientError } from '../errors/client-error';
 
 export const formatDateRange = (
   from: Date | string,
   to: Date | string
 ): string => {
-  if (!dayjs(from).isValid()) throw new Error('Invalid start date');
-  if (!dayjs(to).isValid()) throw new Error('Invalid end date');
+  if (!dayjs(from).isValid()) throw new ClientError('Invalid start date', 409);
+  if (!dayjs(to).isValid()) throw new ClientError('Invalid end date', 409);
 
   const startDate = dayjs(from);
   const endDate = dayjs(to);

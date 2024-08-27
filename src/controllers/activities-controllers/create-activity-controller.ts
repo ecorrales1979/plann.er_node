@@ -1,5 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { prisma } from '../../lib/prisma';
 import {
   isDateAfterAnotherDate,
@@ -28,18 +29,20 @@ export async function createActivityController(
   });
 
   if (!trip) {
-    throw new Error('Trip not found');
+    throw new ClientError('Trip not foundy', 404);
   }
 
   if (isDateBeforeAnotherDate(trip.starts_at, occurs_at)) {
-    throw new Error(
-      'The activity cannot be created on a date before the trip starts'
+    throw new ClientError(
+      'The activity cannot be created on a date before the trip starts',
+      409
     );
   }
 
   if (isDateAfterAnotherDate(occurs_at, trip.ends_at)) {
-    throw new Error(
-      'The activity cannot be created on a date after the trip finished'
+    throw new ClientError(
+      'The activity cannot be created on a date after the trip finished',
+      409
     );
   }
 

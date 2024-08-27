@@ -1,5 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { prisma } from '../../lib/prisma';
 
 const paramsSchema = z.object({
@@ -24,7 +25,7 @@ export async function getParticipantController(
   });
 
   if (!participant) {
-    throw new Error('Participant not found');
+    throw new ClientError('Participant not found', 404);
   }
 
   return { participant };

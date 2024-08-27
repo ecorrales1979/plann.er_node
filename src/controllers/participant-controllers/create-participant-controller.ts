@@ -1,6 +1,7 @@
 import { FastifyRequest } from 'fastify';
 import nodemailer from 'nodemailer';
 import z from 'zod';
+import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
 import { formatDateRange } from '../../utils/formatters';
@@ -36,11 +37,14 @@ export async function createParticipantController(
   });
 
   if (!trip) {
-    throw new Error('Trip not found');
+    throw new ClientError('Trip not found', 404);
   }
 
   if (trip.participants.find((participant) => participant.email === email)) {
-    throw new Error('That email has already been invited for this trip');
+    throw new ClientError(
+      'That email has already been invited for this trip',
+      409
+    );
   }
 
   const participant = await prisma.participant.create({
