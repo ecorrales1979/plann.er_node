@@ -5,6 +5,7 @@ import { activityRoutes } from './routes/activity-routes';
 import { linkRoutes } from './routes/link-routes';
 import { participantRoutes } from './routes/participant-routes';
 import { tripRoutes } from './routes/trip-routes';
+import { env } from './utils/env';
 
 const app = fastify();
 
@@ -23,6 +24,6 @@ app.register(participantRoutes);
 app.register(activityRoutes);
 app.register(linkRoutes);
 
-app.listen({ port: 3333 }).then(() => {
-  console.log('Server running on port 3333');
+app.listen({ port: env.PORT }).then(() => {
+  console.log(`Server running on port ${env.PORT}`);
 });
