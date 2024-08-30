@@ -4,6 +4,7 @@ import z from 'zod';
 import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
+import { env } from '../../utils/env';
 import { formatDateRange } from '../../utils/formatters';
 
 const paramsSchema = z.object({
@@ -17,7 +18,7 @@ export async function confirmTripController(
   reply: FastifyReply
 ) {
   const { tripId } = paramsSchema.parse(request.params);
-  const redirectionUrl = `${process.env.SERVER_URL}/trips/${tripId}`;
+  const redirectionUrl = `${env.FRONT_URL}/trips/${tripId}`;
 
   const trip = await prisma.trip.findUnique({
     where: { id: tripId },
@@ -47,7 +48,7 @@ export async function confirmTripController(
 
   await Promise.all(
     trip.participants.map(async (participant) => {
-      const confirmationLink = `${process.env.SERVER_URL}/participants/${participant.id}/confirm`;
+      const confirmationLink = `${env.SERVER_URL}/participants/${participant.id}/confirm`;
       const message = await mail.sendMail({
         from: {
           name: 'Plann.er Team',

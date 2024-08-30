@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 import { ClientError } from '../../errors/client-error';
 import { prisma } from '../../lib/prisma';
+import { env } from '../../utils/env';
 
 const paramsSchema = z.object({
   participantId: z.string().uuid(),
@@ -23,7 +24,7 @@ export async function confirmParticipantController(
     throw new ClientError('Participant not found', 404);
   }
 
-  const redirectionUrl = `${process.env.SERVER_URL}/trips/${participant.trip_id}`;
+  const redirectionUrl = `${env.FRONT_URL}/trips/${participant.trip_id}`;
 
   if (participant.is_confirmed) {
     return reply.redirect(redirectionUrl);

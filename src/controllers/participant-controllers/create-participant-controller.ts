@@ -4,6 +4,7 @@ import z from 'zod';
 import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
+import { env } from '../../utils/env';
 import { formatDateRange } from '../../utils/formatters';
 
 const paramsSchema = z.object({
@@ -58,7 +59,7 @@ export async function createParticipantController(
 
   const mail = await getMailClient();
 
-  const confirmationLink = `${process.env.SERVER_URL}/participants/${participant.id}/confirm`;
+  const confirmationLink = `${env.SERVER_URL}/participants/${participant.id}/confirm`;
   const message = await mail.sendMail({
     from: {
       name: 'Plann.er Team',

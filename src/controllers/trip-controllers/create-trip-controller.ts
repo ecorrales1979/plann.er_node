@@ -4,6 +4,7 @@ import z from 'zod';
 import { ClientError } from '../../errors/client-error';
 import { getMailClient } from '../../lib/mail';
 import { prisma } from '../../lib/prisma';
+import { env } from '../../utils/env';
 import { formatDateRange } from '../../utils/formatters';
 import { isDateBeforeAnotherDate, isDateBeforeNow } from '../../utils/tools';
 
@@ -59,7 +60,7 @@ export async function createTripController(
   });
 
   const formattedDates = formatDateRange(starts_at, ends_at);
-  const confirmationLink = `${process.env.SERVER_URL}/trips/${trip.id}/confirm`;
+  const confirmationLink = `${env.SERVER_URL}/trips/${trip.id}/confirm`;
 
   const mail = await getMailClient();
   const message = await mail.sendMail({
